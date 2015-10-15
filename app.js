@@ -1,39 +1,59 @@
 "use strict";
+var fs = require('fs');
 
-module.exports= {
-    fromString: function(csvContent){
-        var re = new RegExp('/r', ''),
-            scapeCharacter = ',',
-            resultObj = [];
+module.exports = {
+    fromString: function (csvContent, data) {
+        var resultObj = [],
+            arrCsv = replaceAll('\r', '', csvContent.trim()).split('\n'),
+            header;
 
-        var arrCsv = csvContent.trim().replace(re, '').split('/n'),
-        header = arrCsv[0],
-        attrHeader = header.split(',');
-
-        if(attrHeader.length == 1){
-            scapeCharacter = ';';
-            attrHeader = header.split(';');
+        if (data && data.header) {
+            header = data.header;
         }
+        else if (data && !data.header) {
+           return {message: 'invalid object passing in the function.'};
+        }
+        else {
+            header = arrCsv[0];
+            arrCsv.shift();
+        }
+        var fieldsSize = arrCsv.length,
+            attrHeader = replaceAll(',', ';', header).split(';');
+
         var obj = {};
-        for(var i=0;i<attrHeader.length;i++){
+        for (var i = 0; i < attrHeader.length; i++) {
+            attrHeader[i] = replaceAll(' ', '_', attrHeader[i]).toLowerCase();
             obj[attrHeader[i]] = '';
         }
 
-        arrCsv.shift();
-
-        for(var j=0;j<arrCsv.length;j++){
-            var line = arrCsv[j].split(scapeCharacter),
+        for (var j = 0; j < fieldsSize; j++) {
+            var line = arrCsv[j].split(';'),
                 obj2 = JSON.parse(JSON.stringify(obj));
-            for(var k =0;k<line.length;k++){
-                obj2[attrHeader[k]] = line[k];
+            for (var k = 0; k < line.length; k++) {
+                if (attrHeader[k]) {
+                    obj2[attrHeader[k]] = line[k];
+                }
             }
+
             resultObj.push(obj2);
         }
-
-        console.log(resultObj);
+        return resultObj
 
     },
-    fromFile: function(file){
-
+    fromFile: function (file, obj, next) {
+        var self = this;
+        fs.readFile(file, 'utf8', function (err, data) {
+            if (err) {
+                next(err);
+            }
+            else {
+                var arrContent = self.fromString(data, obj);
+                next(null, arrContent);
+            }
+        });
     }
+}
+
+function replaceAll(find, replace, str) {
+    return str.replace(new RegExp(find, 'g'), replace);
 }
