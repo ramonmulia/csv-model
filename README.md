@@ -2,6 +2,11 @@
 
 Convert your file or string csv to javascript object.
 
+### Installation
+```sh
+npm install csv-model
+```
+
 ### Usage
 ```sh
 var CSVM = require('csv-model');
@@ -37,10 +42,7 @@ CSVM.fromFile('file.csv', null, function (err, obj) {
 });
 
 ```
-### Installation
-```sh
-npm install csv-model
-```
+
 
 ### Options
 - header: String
