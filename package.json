@@ -1,12 +1,21 @@
 {
   "name": "csv-model",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Convert csv file or string to js object",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "key": ["csv","model","object","file",".csv"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ramonmulia/csv-model"
+  },
+  "key": [
+    "csv",
+    "model",
+    "object",
+    "file"
+  ],
   "author": "Ramon Mulia",
   "license": "ISC",
   "devDependencies": {
